@@ -16,7 +16,7 @@ def execute(filters=None):
         report_name="Shift Attendance",
         ignore_prepared_report=True
     )
-
+    frappe.log_error("executed", "executed")
     columns = attendance_data.get("columns") or []
     result = attendance_data.get("result") or []
     chart = attendance_data.get("chart")
