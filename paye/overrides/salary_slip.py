@@ -181,5 +181,4 @@ class CustomSalarySlip(SalarySlip):
         seconds_match = re.search(r'(\d+)s', time_str)
         if seconds_match:
             total_seconds += int(seconds_match.group(1))
-        
         return total_seconds
