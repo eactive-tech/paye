@@ -253,7 +253,7 @@ fixtures = [
                 "name",
                 "in",
                 [
-                    "Company-enable_13th_month_tax",  "Shift Type-custom_overtime_pay", "Shift Type-custom_lateness_fine"
+                    "Company-enable_13th_month_tax",  "Shift Type-custom_overtime_pay", "Shift Type-custom_lateness_fine", "Shift Type-custom_lateness_salary_component", "Shift Type-custom_overtime_salary_component"
                 ]
             ]
         ]
