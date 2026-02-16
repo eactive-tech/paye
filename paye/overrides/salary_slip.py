@@ -39,7 +39,7 @@ class CustomSalarySlip(SalarySlip):
         if isinstance(result, tuple):
             if len(result) == 2:
                 columns, data = result
-                frappe.log_error("data", data)
+                # frappe.log_error("data", data)
             elif len(result) == 3:
                 columns, data, message = result
             elif len(result) == 4:
@@ -62,6 +62,8 @@ class CustomSalarySlip(SalarySlip):
         # Check  overtime
         total_ot_pay = 0
         total_late_deduction = 0
+        total_overtime = 0
+        total_lateness = 0
         default_shift = frappe.db.get_value("Employee", self.employee, "default_shift")
         ot_sal_comp = frappe.db.get_value("Shift Type", default_shift, "custom_overtime_salary_component") or "Overtime"
         late_sal_comp = frappe.db.get_value("Shift Type", default_shift, "custom_lateness_salary_component") or "Lateness"
@@ -70,12 +72,14 @@ class CustomSalarySlip(SalarySlip):
         for row in data:
             if row.get("over_time") not in ("", None, "00:00:00"):
                 ot = self.parse_time_to_seconds(row.get("over_time"))
+                total_overtime += ot
                 if ot > 0:
                     ot_pay = frappe.db.get_value("Shift Type", default_shift, "custom_overtime_pay")
                     total_ot_pay = ot_pay * (ot/3600)
             
             if row.get("late_entry_hrs") not in ("", None, "00:00:00"):
                 lt = self.parse_time_to_seconds(row.get("late_entry_hrs"))
+                total_lateness += lt
                 if lt > 0:
                     lt_ded = frappe.db.get_value("Shift Type", default_shift, "custom_lateness_fine")
                     total_late_deduction = lt_ded * (lt/3600)
@@ -108,7 +112,7 @@ class CustomSalarySlip(SalarySlip):
                 "amount": total_ot_pay,
                 "additional_salary": add_sal_earning.name
             })
-
+            self.custom_total_overtime = frappe.utils.format_duration(total_overtime)
         # Check if Lateness already exists for this period    
         existing_lateness = frappe.db.exists("Additional Salary", {
                 "employee": self.employee,
@@ -138,7 +142,7 @@ class CustomSalarySlip(SalarySlip):
                 "amount": total_late_deduction,
                 "additional_salary": add_sal_deduction.name
             })
-            
+            self.custom_total_lateness =  frappe.utils.format_duration(total_lateness)
 
     def parse_time_to_seconds(self, time_str):
         """
