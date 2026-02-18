@@ -93,7 +93,7 @@ class CustomSalarySlip(SalarySlip):
             "docstatus": 1
         })
         
-        if not existing_overtime:
+        if not existing_overtime and total_ot_pay > 0:
             add_sal_earning = frappe.get_doc({
                 "doctype": "Additional Salary",
                 "employee": self.employee,
@@ -122,7 +122,7 @@ class CustomSalarySlip(SalarySlip):
                 "docstatus": 1
             })
         
-        if not existing_lateness:
+        if not existing_lateness and total_late_deduction > 0:
             add_sal_deduction = frappe.get_doc({
                 "doctype": "Additional Salary",
                 "employee": self.employee,
